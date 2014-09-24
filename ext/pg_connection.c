@@ -3011,7 +3011,7 @@ pgconn_locreat(int argc, VALUE *argv, VALUE self)
 	if (lo_oid == 0)
 		rb_raise(rb_ePGerror, "lo_creat failed");
 
-	return INT2FIX(lo_oid);
+	return rb_uint_new(lo_oid);
 }
 
 /*
@@ -3026,13 +3026,13 @@ pgconn_locreate(VALUE self, VALUE in_lo_oid)
 {
 	Oid ret, lo_oid;
 	PGconn *conn = pg_get_pgconn(self);
-	lo_oid = NUM2INT(in_lo_oid);
+	lo_oid = NUM2UINT(in_lo_oid);
 
 	ret = lo_create(conn, lo_oid);
 	if (ret == InvalidOid)
 		rb_raise(rb_ePGerror, "lo_create failed");
 
-	return INT2FIX(ret);
+	return rb_uint_new(ret);
 }
 
 /*
@@ -3056,7 +3056,7 @@ pgconn_loimport(VALUE self, VALUE filename)
 	if (lo_oid == 0) {
 		rb_raise(rb_ePGerror, "%s", PQerrorMessage(conn));
 	}
-	return INT2FIX(lo_oid);
+	return rb_uint_new(lo_oid);
 }
 
 /*
@@ -3072,7 +3072,7 @@ pgconn_loexport(VALUE self, VALUE lo_oid, VALUE filename)
 	int oid;
 	Check_Type(filename, T_STRING);
 
-	oid = NUM2INT(lo_oid);
+	oid = NUM2UINT(lo_oid);
 	if (oid < 0) {
 		rb_raise(rb_ePGerror, "invalid large object oid %d",oid);
 	}
@@ -3102,7 +3102,7 @@ pgconn_loopen(int argc, VALUE *argv, VALUE self)
 	PGconn *conn = pg_get_pgconn(self);
 
 	rb_scan_args(argc, argv, "11", &selfid, &nmode);
-	lo_oid = NUM2INT(selfid);
+	lo_oid = NUM2UINT(selfid);
 	if(NIL_P(nmode))
 		mode = INV_READ;
 	else
@@ -3269,7 +3269,7 @@ static VALUE
 pgconn_lounlink(VALUE self, VALUE in_oid)
 {
 	PGconn *conn = pg_get_pgconn(self);
-	int oid = NUM2INT(in_oid);
+	int oid = NUM2UINT(in_oid);
 
 	if (oid < 0)
 		rb_raise(rb_ePGerror, "invalid oid %d",oid);
